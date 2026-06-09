@@ -1,8 +1,12 @@
 package ru.matvey.chat.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 import ru.matvey.chat.dto.AuthDtos.LoginRequest;
 import ru.matvey.chat.dto.AuthDtos.RegisterRequest;
@@ -25,10 +29,19 @@ public class AuthController {
         return authService.register(req);
     }
 
-    @PostMapping("/login")
-    public UserResponse login(@Valid @RequestBody LoginRequest req) {
-        return authService.login(req);
-    }
+  @PostMapping("/login")
+  public UserResponse login(@Valid @RequestBody LoginRequest req, HttpServletRequest request) {
+    UserResponse response = authService.login(req);
+
+    // Сохраняем SecurityContext в сессию
+    HttpSession session = request.getSession(true);
+    session.setAttribute(
+        HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+        SecurityContextHolder.getContext()
+    );
+
+    return response;
+  }
 
     @GetMapping("/me")
     public UserResponse getMe() {
