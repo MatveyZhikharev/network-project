@@ -168,18 +168,15 @@ function handleSendMessage(content) {
     roomStatus.kind = 'warning'
     return
   }
+
   if (wsStatus.value !== 'connected') {
     roomStatus.text = `WS статус: ${wsStatus.value}`
     roomStatus.kind = 'warning'
     return
   }
+
   try {
     sendRoomMessage(selectedRoom.value.id, content)
-    messages.value.push({
-      senderUsername: currentUsername.value || 'you',
-      content,
-      createdAt: new Date().toISOString()
-    })
   } catch (error) {
     roomStatus.text = error.message
     roomStatus.kind = 'error'
