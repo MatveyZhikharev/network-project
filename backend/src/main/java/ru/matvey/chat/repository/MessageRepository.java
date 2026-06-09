@@ -24,4 +24,6 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
             @Param("roomId") UUID roomId, 
             Pageable pageable
     );
+
+    List<Message> findByRoomIdOrderByCreatedAtAsc(UUID roomId);
 }

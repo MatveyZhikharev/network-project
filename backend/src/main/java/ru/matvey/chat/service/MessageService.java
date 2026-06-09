@@ -15,6 +15,7 @@ import ru.matvey.chat.repository.RoomMemberRepository;
 import ru.matvey.chat.repository.RoomRepository;
 import ru.matvey.chat.repository.UserRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -59,5 +60,20 @@ public class MessageService {
                 message.getCreatedAt().toString()
         );
     }
+
+  public List<MessageResponse> getMessagesByRoom(UUID roomId) {
+    return messageRepository.findByRoomIdOrderByCreatedAtAsc(roomId)
+        .stream()
+        .map(m -> new MessageResponse(
+            m.getId().toString(),
+            m.getRoom().getId().toString(),
+            m.getSender().getId().toString(),
+            m.getSender().getUsername(),
+            m.getContent(),
+            m.getMessageType().toString(),
+            m.getCreatedAt().toString()
+        ))
+        .toList();
+  }
 }
 
