@@ -19,6 +19,16 @@ jobs:
           script: |
             cd /opt/network-project
             git pull origin main
-            docker compose down
-            docker compose build --no-cache
-            docker compose up -d
+            docker compose build
+            docker compose up -d --remove-orphans
+
+      - name: Health check
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            sleep 10
+            curl -f http://localhost:5173 || exit 1
