@@ -26,7 +26,11 @@
   --text-lg: 1.35rem;
   --text-xl: 2rem;
   --font-body: 'General Sans', Inter, system-ui, sans-serif;
-  --sidebar-create-h: 0px;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 * { box-sizing: border-box; }
@@ -47,7 +51,6 @@ code {
   background: var(--color-surface-2);
 }
 
-/* ── App shell ── */
 .app-shell {
   height: 100vh;
   display: grid;
@@ -92,9 +95,12 @@ code {
   color: white;
 }
 
-.grid-single { display: grid; gap: var(--space-6); grid-template-columns: minmax(0, 720px); }
+.grid-single {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: minmax(0, 720px);
+}
 
-/* ── Chat layout ── */
 .chat-layout {
   display: grid;
   gap: var(--space-6);
@@ -103,26 +109,25 @@ code {
   align-items: stretch;
 }
 
-/* ── Sidebar ── */
 .chat-sidebar {
   display: grid;
   gap: var(--space-4);
   height: 100%;
-  /* создание скрыто (0fr), список занимает всё (1fr) */
-  grid-template-rows: 0fr 1fr;
+  grid-template-rows: 44px 1fr;
   transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   min-height: 0;
 }
 
-/* при hover/focus внутри — открываем create-panel */
-.chat-sidebar.create-open {
+.chat-sidebar:has(.create-panel:hover),
+.chat-sidebar:has(.create-panel:focus-within) {
   grid-template-rows: auto 1fr;
 }
 
-.chat-sidebar > * { min-height: 0; }
+.chat-sidebar > * {
+  min-height: 0;
+}
 
-/* ── Create panel: скрыта через overflow:hidden на grid-row ── */
 .create-panel {
   overflow: hidden;
   border-radius: var(--radius-lg);
@@ -133,32 +138,16 @@ code {
   padding: var(--space-5) var(--space-6);
   opacity: 0;
   transform: translateY(-4px);
-  transition:
-          opacity 0.2s ease,
-          transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.chat-sidebar.create-open .create-panel__inner {
+.chat-sidebar:has(.create-panel:hover) .create-panel__inner,
+.chat-sidebar:has(.create-panel:focus-within) .create-panel__inner {
   opacity: 1;
   transform: translateY(0);
-  transition:
-          opacity 0.25s ease 0.1s,
-          transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.05s;
-
-
-/* чтобы grid-row: 0fr работал — внутренний контент не должен торчать */
-.create-panel > * {
-  /* при закрытии плавно убираем opacity */
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease 0.1s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.05s;
 }
 
-.chat-sidebar.create-open .create-panel > * {
-  opacity: 1;
-  transition: opacity 0.25s ease 0.1s;
-}
-
-/* ── Panels ── */
 .panel,
 .chat-panel {
   background: var(--color-surface);
@@ -167,7 +156,10 @@ code {
   box-shadow: var(--shadow-sm);
 }
 
-.panel { padding: var(--space-5) var(--space-6); }
+.panel {
+  padding: var(--space-5) var(--space-6);
+}
+
 .panel .stack { gap: var(--space-3); }
 
 .panel-header,
@@ -187,14 +179,26 @@ code {
   font-size: 0.78rem;
 }
 
-h2 { margin: 0.3rem 0 0; font-size: var(--text-lg); }
+h2 {
+  margin: 0.3rem 0 0;
+  font-size: var(--text-lg);
+}
 
 .stack { display: grid; gap: var(--space-4); }
 .field { display: grid; gap: 0.4rem; }
 
-.field span, .muted, .room-meta, .room-description { color: var(--color-text-muted); }
+.field span,
+.muted,
+.room-meta,
+.room-description {
+  color: var(--color-text-muted);
+}
 
-.field input, .field textarea, .field select, .composer textarea, .join-input {
+.field input,
+.field textarea,
+.field select,
+.composer textarea,
+.join-input {
   width: 100%;
   border-radius: 0.8rem;
   border: 1px solid rgba(40, 37, 29, 0.14);
@@ -203,13 +207,20 @@ h2 { margin: 0.3rem 0 0; font-size: var(--text-lg); }
   outline: none;
 }
 
-.field input:focus, .field textarea:focus, .field select:focus,
-.composer textarea:focus, .join-input:focus {
+.field input:focus,
+.field textarea:focus,
+.field select:focus,
+.composer textarea:focus,
+.join-input:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(1, 105, 111, 0.15);
 }
 
-.actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
 
 .btn {
   min-height: 40px;
@@ -220,11 +231,19 @@ h2 { margin: 0.3rem 0 0; font-size: var(--text-lg); }
   font-weight: 600;
 }
 
-.btn-primary { background: var(--color-primary); color: white; }
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+}
 .btn-primary:hover { background: var(--color-primary-hover); }
-.btn-secondary { background: var(--color-surface-2); border: 1px solid rgba(40, 37, 29, 0.12); }
 
-.status-chip, .badge {
+.btn-secondary {
+  background: var(--color-surface-2);
+  border: 1px solid rgba(40, 37, 29, 0.12);
+}
+
+.status-chip,
+.badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -234,15 +253,20 @@ h2 { margin: 0.3rem 0 0; font-size: var(--text-lg); }
   font-weight: 700;
 }
 
-.badge { background: var(--color-primary-soft); color: var(--color-primary); }
-.badge-protected { background: rgba(209, 153, 0, 0.14); color: var(--color-warning); }
+.badge {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+.badge-protected {
+  background: rgba(209, 153, 0, 0.14);
+  color: var(--color-warning);
+}
 
 .status-idle { background: rgba(40, 37, 29, 0.08); }
 .status-success { background: rgba(67, 122, 34, 0.14); color: var(--color-success); }
 .status-warning { background: rgba(209, 153, 0, 0.14); color: var(--color-warning); }
 .status-error { background: rgba(161, 44, 123, 0.14); color: var(--color-error); }
 
-/* ── Rooms panel ── */
 .rooms-panel {
   display: flex;
   flex-direction: column;
@@ -251,7 +275,9 @@ h2 { margin: 0.3rem 0 0; font-size: var(--text-lg); }
   min-height: 0;
 }
 
-.rooms-panel .panel-header { flex-shrink: 0; }
+.rooms-panel .panel-header {
+  flex-shrink: 0;
+}
 
 .room-list {
   display: flex;
@@ -286,9 +312,10 @@ h2 { margin: 0.3rem 0 0; font-size: var(--text-lg); }
   display: block;
 }
 
-.room-item__main:hover { background: rgba(40, 37, 29, 0.03); }
+.room-item__main:hover {
+  background: rgba(40, 37, 29, 0.03);
+}
 
-/* ── Join панель — плавно появляется ── */
 .room-join {
   display: flex;
   flex-direction: column;
@@ -299,22 +326,16 @@ h2 { margin: 0.3rem 0 0; font-size: var(--text-lg); }
   animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
+.join-input {
+  font-size: var(--text-sm);
 }
 
-.join-input { font-size: var(--text-sm); }
-
-.btn-join { width: 100%; justify-content: center; }
-
-.room-top {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-4);
-  align-items: center;
+.btn-join {
+  width: 100%;
+  justify-content: center;
 }
 
+.room-top,
 .message-meta {
   display: flex;
   justify-content: space-between;
@@ -322,7 +343,6 @@ h2 { margin: 0.3rem 0 0; font-size: var(--text-lg); }
   align-items: center;
 }
 
-/* ── Chat panel ── */
 .chat-panel {
   height: 100%;
   display: grid;
@@ -363,7 +383,10 @@ h2 { margin: 0.3rem 0 0; font-size: var(--text-lg); }
   border-color: rgba(1, 105, 111, 0.2);
 }
 
-.message p, .info-list { margin: 0; }
+.message p,
+.info-list {
+  margin: 0;
+}
 
 .composer {
   display: grid;
@@ -388,17 +411,46 @@ h2 { margin: 0.3rem 0 0; font-size: var(--text-lg); }
   color: var(--color-text-muted);
 }
 
-.info-list { display: grid; gap: var(--space-3); padding-left: 1.2rem; }
+.info-list {
+  display: grid;
+  gap: var(--space-3);
+  padding-left: 1.2rem;
+}
 
 @media (max-width: 960px) {
-  .chat-layout { grid-template-columns: 1fr; height: auto; }
-  .chat-sidebar { height: auto; grid-template-rows: 0fr 1fr; }
-  .chat-panel { height: 80vh; }
+  .chat-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .chat-sidebar {
+    height: auto;
+    grid-template-rows: 44px 1fr;
+  }
+  .chat-panel {
+    height: 80vh;
+  }
 }
 
 @media (max-width: 640px) {
-  .app-header, .panel, .chat-panel__header, .messages, .composer, .app-main { padding: 1rem; }
-  .app-header { flex-direction: column; align-items: start; }
-  .composer { grid-template-columns: 1fr; }
-  .message { max-width: 100%; }
+  .app-header,
+  .panel,
+  .chat-panel__header,
+  .messages,
+  .composer,
+  .app-main {
+    padding: 1rem;
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .composer {
+    grid-template-columns: 1fr;
+  }
+
+  .message {
+    max-width: 100%;
+  }
 }

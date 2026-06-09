@@ -1,6 +1,6 @@
 <template>
   <section class="chat-layout">
-    <div class="chat-sidebar" :class="{ 'create-open': createOpen }" @mouseenter="createOpen = true" @mouseleave="createOpen = false">
+    <div class="chat-sidebar">
 
       <section class="panel create-panel">
         <div class="create-panel__inner">
@@ -36,7 +36,6 @@
         </div>
       </section>
 
-      <!-- Секция 2: Список комнат (всегда видна) -->
       <RoomList
           :rooms="rooms"
           :selected-room-id="selectedRoom?.id ?? null"
@@ -47,7 +46,6 @@
           @join="joinRoom"
           @update:join-password="joinPassword = $event"
       />
-
     </div>
 
     <ChatPanel
@@ -73,7 +71,6 @@ const messages = ref([])
 const joinPassword = ref('')
 const wsStatus = ref('disconnected')
 const currentUsername = ref('')
-const createOpen = ref(false)
 
 const createForm = reactive({
   name: '',
@@ -195,5 +192,7 @@ authApi.me().then(user => {
 
 loadRooms()
 
-onBeforeUnmount(() => { disconnectWs() })
+onBeforeUnmount(() => {
+  disconnectWs()
+})
 </script>
