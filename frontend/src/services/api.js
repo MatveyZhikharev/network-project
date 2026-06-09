@@ -64,7 +64,10 @@ export const roomsApi = {
     },
     members(roomId) {
         return request(`/api/rooms/${roomId}/members`)
-    }
+    },
+    getMessages(roomId) {
+        return request(`/api/rooms/${roomId}/messages`)
+    },
 }
 
 export { API_BASE_URL }

@@ -33,7 +33,6 @@ public class AuthController {
   public UserResponse login(@Valid @RequestBody LoginRequest req, HttpServletRequest request) {
     UserResponse response = authService.login(req);
 
-    // Сохраняем SecurityContext в сессию
     HttpSession session = request.getSession(true);
     session.setAttribute(
         HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,

@@ -150,11 +150,17 @@ async function joinRoom() {
   }
 }
 
-function connectWs() {
+async function connectWs() {
   if (!selectedRoom.value) {
     roomStatus.text = 'Сначала выбери комнату'
     roomStatus.kind = 'warning'
     return
+  }
+
+  try {
+    messages.value = await roomsApi.getMessages(selectedRoom.value.id)
+  } catch (e) {
+    messages.value = []
   }
 
   connectToRoom(
