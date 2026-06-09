@@ -61,7 +61,13 @@ public class MessageService {
         );
     }
 
-  public List<MessageResponse> getMessagesByRoom(UUID roomId) {
+  public List<MessageResponse> getMessagesByRoom(UUID roomId, String username) {
+    User user = userRepository.findByUsername(username)
+        .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "User not found"));
+
+    if (!roomMemberRepository.existsByRoomIdAndUserIdAndActiveTrue(roomId, user.getId())) {
+      throw new ApiException(HttpStatus.FORBIDDEN, "You are not a member of this room");
+    }
     return messageRepository.findByRoomIdOrderByCreatedAtAsc(roomId)
         .stream()
         .map(m -> new MessageResponse(

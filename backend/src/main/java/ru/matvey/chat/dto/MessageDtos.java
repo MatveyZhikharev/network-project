@@ -12,7 +12,7 @@ public class MessageDtos {
             String id,
             String roomId,
             String senderId,
-            String senderName,
+            String senderUsername,
             String content,
             String messageType,
             String createdAt

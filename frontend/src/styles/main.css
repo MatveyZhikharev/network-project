@@ -26,12 +26,15 @@
   --text-lg: 1.35rem;
   --text-xl: 2rem;
   --font-body: 'General Sans', Inter, system-ui, sans-serif;
+  --sidebar-create-h: 0px;
 }
 
 * { box-sizing: border-box; }
-html, body, #app { min-height: 100%; }
-body {
+html, body, #app {
+  height: 100%;
   margin: 0;
+}
+body {
   font-family: var(--font-body);
   color: var(--color-text);
   background: var(--color-bg);
@@ -44,10 +47,12 @@ code {
   background: var(--color-surface-2);
 }
 
+/* ── App shell ── */
 .app-shell {
-  min-height: 100vh;
+  height: 100vh;
   display: grid;
   grid-template-rows: auto 1fr;
+  overflow: hidden;
 }
 
 .app-header {
@@ -59,8 +64,7 @@ code {
   border-bottom: 1px solid rgba(40, 37, 29, 0.12);
   background: rgba(249, 248, 245, 0.88);
   backdrop-filter: blur(14px);
-  position: sticky;
-  top: 0;
+  flex-shrink: 0;
 }
 
 .app-header h1 {
@@ -70,12 +74,11 @@ code {
 
 .app-main {
   padding: clamp(1rem, 2vw, 2rem);
+  overflow: hidden;
+  height: 100%;
 }
 
-.app-nav {
-  display: flex;
-  gap: var(--space-4);
-}
+.app-nav { display: flex; gap: var(--space-4); }
 
 .app-nav a {
   padding: 0.7rem 1rem;
@@ -89,26 +92,73 @@ code {
   color: white;
 }
 
-.grid-single,
+.grid-single { display: grid; gap: var(--space-6); grid-template-columns: minmax(0, 720px); }
+
+/* ── Chat layout ── */
 .chat-layout {
   display: grid;
   gap: var(--space-6);
-}
-
-.grid-single {
-  grid-template-columns: minmax(0, 720px);
-}
-
-.chat-layout {
   grid-template-columns: 360px minmax(0, 1fr);
-  align-items: start;
+  height: 100%;
+  align-items: stretch;
 }
 
+/* ── Sidebar ── */
 .chat-sidebar {
   display: grid;
-  gap: var(--space-6);
+  gap: var(--space-4);
+  height: 100%;
+  /* создание скрыто (0fr), список занимает всё (1fr) */
+  grid-template-rows: 0fr 1fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  min-height: 0;
 }
 
+/* при hover/focus внутри — открываем create-panel */
+.chat-sidebar.create-open {
+  grid-template-rows: auto 1fr;
+}
+
+.chat-sidebar > * { min-height: 0; }
+
+/* ── Create panel: скрыта через overflow:hidden на grid-row ── */
+.create-panel {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.create-panel__inner {
+  min-height: 0;
+  padding: var(--space-5) var(--space-6);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+          opacity 0.2s ease,
+          transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chat-sidebar.create-open .create-panel__inner {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+          opacity 0.25s ease 0.1s,
+          transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.05s;
+
+
+/* чтобы grid-row: 0fr работал — внутренний контент не должен торчать */
+.create-panel > * {
+  /* при закрытии плавно убираем opacity */
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.chat-sidebar.create-open .create-panel > * {
+  opacity: 1;
+  transition: opacity 0.25s ease 0.1s;
+}
+
+/* ── Panels ── */
 .panel,
 .chat-panel {
   background: var(--color-surface);
@@ -117,9 +167,8 @@ code {
   box-shadow: var(--shadow-sm);
 }
 
-.panel {
-  padding: var(--space-6);
-}
+.panel { padding: var(--space-5) var(--space-6); }
+.panel .stack { gap: var(--space-3); }
 
 .panel-header,
 .chat-panel__header {
@@ -127,7 +176,7 @@ code {
   justify-content: space-between;
   gap: var(--space-4);
   align-items: start;
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
 }
 
 .eyebrow {
@@ -138,77 +187,44 @@ code {
   font-size: 0.78rem;
 }
 
-h2 {
-  margin: 0.3rem 0 0;
-  font-size: var(--text-lg);
-}
+h2 { margin: 0.3rem 0 0; font-size: var(--text-lg); }
 
-.stack {
-  display: grid;
-  gap: var(--space-4);
-}
+.stack { display: grid; gap: var(--space-4); }
+.field { display: grid; gap: 0.4rem; }
 
-.field {
-  display: grid;
-  gap: 0.45rem;
-}
+.field span, .muted, .room-meta, .room-description { color: var(--color-text-muted); }
 
-.field span,
-.muted,
-.room-meta,
-.room-description {
-  color: var(--color-text-muted);
-}
-
-.field input,
-.field textarea,
-.field select,
-.composer textarea {
+.field input, .field textarea, .field select, .composer textarea, .join-input {
   width: 100%;
   border-radius: 0.8rem;
   border: 1px solid rgba(40, 37, 29, 0.14);
   background: white;
-  padding: 0.9rem 1rem;
+  padding: 0.7rem 1rem;
   outline: none;
 }
 
-.field input:focus,
-.field textarea:focus,
-.field select:focus,
-.composer textarea:focus {
+.field input:focus, .field textarea:focus, .field select:focus,
+.composer textarea:focus, .join-input:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(1, 105, 111, 0.15);
 }
 
-.actions {
-  display: flex;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-}
+.actions { display: flex; gap: var(--space-3); flex-wrap: wrap; }
 
 .btn {
-  min-height: 44px;
-  padding: 0.85rem 1rem;
+  min-height: 40px;
+  padding: 0.7rem 1rem;
   border-radius: 0.85rem;
   border: none;
   cursor: pointer;
   font-weight: 600;
 }
 
-.btn-primary {
-  background: var(--color-primary);
-  color: white;
-}
-
+.btn-primary { background: var(--color-primary); color: white; }
 .btn-primary:hover { background: var(--color-primary-hover); }
+.btn-secondary { background: var(--color-surface-2); border: 1px solid rgba(40, 37, 29, 0.12); }
 
-.btn-secondary {
-  background: var(--color-surface-2);
-  border: 1px solid rgba(40, 37, 29, 0.12);
-}
-
-.status-chip,
-.badge {
+.status-chip, .badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -218,38 +234,87 @@ h2 {
   font-weight: 700;
 }
 
-.badge {
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-}
+.badge { background: var(--color-primary-soft); color: var(--color-primary); }
+.badge-protected { background: rgba(209, 153, 0, 0.14); color: var(--color-warning); }
 
 .status-idle { background: rgba(40, 37, 29, 0.08); }
 .status-success { background: rgba(67, 122, 34, 0.14); color: var(--color-success); }
 .status-warning { background: rgba(209, 153, 0, 0.14); color: var(--color-warning); }
 .status-error { background: rgba(161, 44, 123, 0.14); color: var(--color-error); }
 
-.room-list,
-.messages {
-  display: grid;
-  gap: var(--space-4);
+/* ── Rooms panel ── */
+.rooms-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: var(--space-5) var(--space-6);
+  min-height: 0;
+}
+
+.rooms-panel .panel-header { flex-shrink: 0; }
+
+.room-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding-right: var(--space-2);
 }
 
 .room-item {
-  width: 100%;
-  text-align: left;
-  padding: var(--space-5);
-  background: var(--color-surface-2);
   border: 1px solid rgba(40, 37, 29, 0.08);
   border-radius: var(--radius-md);
-  cursor: pointer;
+  background: var(--color-surface-2);
+  overflow: hidden;
+  transition: border-color 0.2s ease;
 }
 
 .room-item.active {
   border-color: rgba(1, 105, 111, 0.4);
-  background: rgba(1, 105, 111, 0.06);
+  background: rgba(1, 105, 111, 0.03);
 }
 
-.room-top,
+.room-item__main {
+  width: 100%;
+  text-align: left;
+  padding: var(--space-4) var(--space-5);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: block;
+}
+
+.room-item__main:hover { background: rgba(40, 37, 29, 0.03); }
+
+/* ── Join панель — плавно появляется ── */
+.room-join {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid rgba(40, 37, 29, 0.08);
+  background: rgba(1, 105, 111, 0.04);
+  animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.join-input { font-size: var(--text-sm); }
+
+.btn-join { width: 100%; justify-content: center; }
+
+.room-top {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  align-items: center;
+}
+
 .message-meta {
   display: flex;
   justify-content: space-between;
@@ -257,22 +322,30 @@ h2 {
   align-items: center;
 }
 
+/* ── Chat panel ── */
 .chat-panel {
-  min-height: 70vh;
+  height: 100%;
   display: grid;
   grid-template-rows: auto 1fr auto;
   overflow: hidden;
+  min-height: 0;
 }
 
 .chat-panel__header {
-  padding: var(--space-6);
+  padding: var(--space-5) var(--space-6);
   margin-bottom: 0;
   border-bottom: 1px solid rgba(40, 37, 29, 0.08);
+  flex-shrink: 0;
 }
 
 .messages {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
   padding: var(--space-6);
   background: linear-gradient(180deg, rgba(1, 105, 111, 0.04), transparent 30%);
+  min-height: 0;
 }
 
 .message {
@@ -281,6 +354,7 @@ h2 {
   border-radius: 1rem;
   background: var(--color-surface-2);
   border: 1px solid rgba(40, 37, 29, 0.08);
+  flex-shrink: 0;
 }
 
 .message.self {
@@ -289,22 +363,21 @@ h2 {
   border-color: rgba(1, 105, 111, 0.2);
 }
 
-.message p,
-.info-list {
-  margin: 0;
-}
+.message p, .info-list { margin: 0; }
 
 .composer {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: var(--space-4);
-  padding: var(--space-6);
+  padding: var(--space-5) var(--space-6);
   border-top: 1px solid rgba(40, 37, 29, 0.08);
   background: var(--color-surface-2);
+  flex-shrink: 0;
 }
 
 .composer textarea {
-  min-height: 72px;
+  min-height: 56px;
+  max-height: 160px;
   resize: vertical;
 }
 
@@ -315,38 +388,17 @@ h2 {
   color: var(--color-text-muted);
 }
 
-.info-list {
-  display: grid;
-  gap: var(--space-3);
-  padding-left: 1.2rem;
-}
+.info-list { display: grid; gap: var(--space-3); padding-left: 1.2rem; }
 
 @media (max-width: 960px) {
-  .chat-layout {
-    grid-template-columns: 1fr;
-  }
+  .chat-layout { grid-template-columns: 1fr; height: auto; }
+  .chat-sidebar { height: auto; grid-template-rows: 0fr 1fr; }
+  .chat-panel { height: 80vh; }
 }
 
 @media (max-width: 640px) {
-  .app-header,
-  .panel,
-  .chat-panel__header,
-  .messages,
-  .composer,
-  .app-main {
-    padding: 1rem;
-  }
-
-  .app-header {
-    flex-direction: column;
-    align-items: start;
-  }
-
-  .composer {
-    grid-template-columns: 1fr;
-  }
-
-  .message {
-    max-width: 100%;
-  }
+  .app-header, .panel, .chat-panel__header, .messages, .composer, .app-main { padding: 1rem; }
+  .app-header { flex-direction: column; align-items: start; }
+  .composer { grid-template-columns: 1fr; }
+  .message { max-width: 100%; }
 }

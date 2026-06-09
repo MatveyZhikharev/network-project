@@ -9,6 +9,7 @@ import ru.matvey.chat.dto.RoomDtos.*;
 import ru.matvey.chat.service.MessageService;
 import ru.matvey.chat.service.RoomService;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,8 +49,8 @@ public class RoomController {
     }
 
     @GetMapping("/{roomId}/messages")
-    public List<MessageDtos.MessageResponse> getMessages(@PathVariable UUID roomId) {
-      return messageService.getMessagesByRoom(roomId);
+    public List<MessageDtos.MessageResponse> getMessages(@PathVariable UUID roomId, Principal principal) {
+      return messageService.getMessagesByRoom(roomId, principal.getName());
     }
 }
 
