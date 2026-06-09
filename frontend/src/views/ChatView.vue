@@ -113,6 +113,7 @@ async function loadRooms() {
 function selectRoom(room) {
   selectedRoom.value = room
   messages.value = []
+  connectWs()
 }
 
 async function createRoom() {
@@ -173,6 +174,12 @@ function connectWs() {
 function handleSendMessage(content) {
   if (!selectedRoom.value) {
     roomStatus.text = 'Комната не выбрана'
+    roomStatus.kind = 'warning'
+    return
+  }
+
+  if (wsStatus.value !== 'connected') {
+    roomStatus.text = `WS статус: ${wsStatus.value}. Подожди соединения.`
     roomStatus.kind = 'warning'
     return
   }
