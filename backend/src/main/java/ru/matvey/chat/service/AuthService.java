@@ -12,6 +12,8 @@ import ru.matvey.chat.dto.AuthDtos.LoginRequest;
 import ru.matvey.chat.dto.AuthDtos.RegisterRequest;
 import ru.matvey.chat.dto.AuthDtos.UserResponse;
 import ru.matvey.chat.exception.ApiException;
+import ru.matvey.chat.repository.MessageRepository;
+import ru.matvey.chat.repository.RoomMemberRepository;
 import ru.matvey.chat.repository.UserRepository;
 
 @Service
@@ -19,9 +21,16 @@ import ru.matvey.chat.repository.UserRepository;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
+    private final RoomMemberRepository roomMemberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) { this.userRepository = userRepository; this.passwordEncoder = passwordEncoder; }
+    public AuthService(UserRepository userRepository, MessageRepository messageRepository, RoomMemberRepository roomMemberRepository,PasswordEncoder passwordEncoder) {
+      this.userRepository = userRepository;
+      this.messageRepository = messageRepository;
+      this.roomMemberRepository = roomMemberRepository;
+      this.passwordEncoder = passwordEncoder;
+    }
 
 
     @Transactional
@@ -71,6 +80,8 @@ public class AuthService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Not authenticated"));
+        messageRepository.deleteBySender(user);
+        roomMemberRepository.deleteByUser(user);
         userRepository.delete(user);
         SecurityContextHolder.clearContext();
     }

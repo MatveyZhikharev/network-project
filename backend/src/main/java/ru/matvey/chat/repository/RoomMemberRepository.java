@@ -2,6 +2,7 @@ package ru.matvey.chat.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.matvey.chat.domain.entities.RoomMember;
+import ru.matvey.chat.domain.entities.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,4 +12,6 @@ public interface RoomMemberRepository extends JpaRepository<RoomMember, UUID> {
     boolean existsByRoomIdAndUserIdAndActiveTrue(UUID roomId, UUID userId);
     Optional<RoomMember> findByRoomIdAndUserId(UUID roomId, UUID userId);
     List<RoomMember> findAllByRoomIdAndActiveTrue(UUID roomId);
+
+    void deleteByUser(User user);
 }

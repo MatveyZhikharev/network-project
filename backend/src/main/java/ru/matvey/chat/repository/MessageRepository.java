@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.matvey.chat.domain.entities.Message;
+import ru.matvey.chat.domain.entities.User;
 
 import java.time.Instant;
 import java.util.List;
@@ -26,4 +27,6 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
     );
 
     List<Message> findByRoomIdOrderByCreatedAtAsc(UUID roomId);
+
+    void deleteBySender(User user);
 }
