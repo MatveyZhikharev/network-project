@@ -109,25 +109,39 @@ code {
   align-items: stretch;
 }
 
+/* 3 rows: create-panel (collapsed) | rooms | user-panel (collapsed) */
 .chat-sidebar {
   display: grid;
   gap: var(--space-4);
   height: 100%;
-  grid-template-rows: 44px 1fr;
+  grid-template-rows: 44px 1fr 44px;
   transition: grid-template-rows 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   min-height: 0;
 }
 
+/* create-panel hovered — expand top row */
 .chat-sidebar:has(.create-panel:hover),
 .chat-sidebar:has(.create-panel:focus-within) {
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr 44px;
+}
+
+/* user-panel hovered — expand bottom row */
+.chat-sidebar:has(.user-panel:hover) {
+  grid-template-rows: 44px 1fr auto;
+}
+
+/* both hovered simultaneously */
+.chat-sidebar:has(.create-panel:hover):has(.user-panel:hover),
+.chat-sidebar:has(.create-panel:focus-within):has(.user-panel:hover) {
+  grid-template-rows: auto 1fr auto;
 }
 
 .chat-sidebar > * {
   min-height: 0;
 }
 
+/* ── create-panel ── */
 .create-panel {
   overflow: hidden;
   border-radius: var(--radius-lg);
@@ -146,6 +160,36 @@ code {
   opacity: 1;
   transform: translateY(0);
   transition: opacity 0.25s ease 0.1s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.05s;
+}
+
+/* ── user-panel ── */
+.user-panel {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  /* remove default panel padding — we control it inside */
+  padding: 0 !important;
+}
+
+.user-panel__inner {
+  padding: var(--space-5) var(--space-6);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.chat-sidebar:has(.user-panel:hover) .user-panel__inner {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.25s ease 0.1s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.05s;
+}
+
+.user-panel__name {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--color-text);
 }
 
 .panel,
@@ -241,6 +285,18 @@ h2 {
   background: var(--color-surface-2);
   border: 1px solid rgba(40, 37, 29, 0.12);
 }
+
+.btn-danger {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.85rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+.btn-danger:hover { background: #c53030; }
 
 .status-chip,
 .badge {
@@ -424,7 +480,7 @@ h2 {
   }
   .chat-sidebar {
     height: auto;
-    grid-template-rows: 44px 1fr;
+    grid-template-rows: 44px 1fr 44px;
   }
   .chat-panel {
     height: 80vh;

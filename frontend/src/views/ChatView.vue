@@ -49,6 +49,7 @@
 
       <section class="panel user-panel">
         <div class="user-panel__inner">
+          <p class="eyebrow">Аккаунт</p>
           <p class="user-panel__name">{{ currentUsername }}</p>
           <button class="btn btn-danger" @click="handleDeleteAccount">Удалить аккаунт</button>
         </div>
@@ -63,7 +64,6 @@
         @send-message="handleSendMessage"
     />
 
-    <!-- Confirmation modal -->
     <div v-if="showDeleteConfirm" class="modal-overlay" @click.self="showDeleteConfirm = false">
       <div class="modal">
         <h3>Удалить аккаунт?</h3>
@@ -233,52 +233,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.user-panel {
-  margin-top: auto;
-}
-.user-panel__inner {
-  padding: 0.6rem 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  overflow: hidden;
-}
-.user-panel__name {
-  font-weight: 600;
-  font-size: 0.875rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex: 1;
-}
-.btn-danger {
-  background: #e53e3e;
-  color: white;
-  border: none;
-  padding: 0.4rem 0.75rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  white-space: nowrap;
-  flex-shrink: 0;
-  /* hidden by default */
-  opacity: 0;
-  max-width: 0;
-  padding-left: 0;
-  padding-right: 0;
-  overflow: hidden;
-  transition: opacity 0.25s ease, max-width 0.25s ease, padding 0.25s ease;
-}
-.user-panel__inner:hover .btn-danger {
-  opacity: 1;
-  max-width: 160px;
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
-}
-.btn-danger:hover {
-  background: #c53030;
-}
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -298,28 +252,11 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 1rem;
 }
-.modal h3 {
-  margin: 0;
-  font-size: 1.25rem;
-}
-.modal p {
-  margin: 0;
-  color: #666;
-}
+.modal h3 { margin: 0; font-size: 1.25rem; }
+.modal p { margin: 0; color: #666; }
 .modal-actions {
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
-}
-.btn-secondary {
-  background: #eee;
-  color: #333;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.btn-secondary:hover {
-  background: #ddd;
 }
 </style>
