@@ -13,7 +13,7 @@ public class Room {
     private String passwordHash;
     @Column(nullable = false, updatable = false) private Instant createdAt = Instant.now();
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "created_by_id", nullable = false)
+    @JoinColumn(name = "created_by_id")
     private User createdBy;
     public Room() {}
     public UUID getId() { return id; }
