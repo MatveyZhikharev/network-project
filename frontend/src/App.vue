@@ -2,8 +2,8 @@
   <div class="app-shell">
     <header class="app-header">
       <div>
-        <p class="eyebrow">Vue + Spring Boot</p>
-        <h1>Network Chat</h1>
+        <p class="eyebrow">отечественный мессенджер</p>
+        <h1>СУПРЕМУМ</h1>
       </div>
       <nav class="app-nav">
         <RouterLink to="/auth">Auth</RouterLink>
