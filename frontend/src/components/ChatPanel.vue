@@ -21,7 +21,14 @@
           <span>{{ message.createdAt }}</span>
         </div>
 
-        <p v-if="'.png' in message.content || '.jpg' in message.content || '.jpeg' in message.content" v-html="message.content"></p>
+        <p
+            v-if="
+              message.content.includes('.png') ||
+              message.content.includes('.jpg') ||
+              message.content.includes('.jpeg')
+            "
+            v-html="message.content"
+        ></p>
         <img v-else @href="message.content">
       </article>
 
@@ -32,20 +39,20 @@
     </div>
 
     <form class="composer" @submit.prevent="submitMessage">
-      <textarea v-model="draft" placeholder="Напиши сообщение" />
+      <textarea v-model="draft" placeholder="Напиши сообщение"/>
       <button class="btn btn-primary" type="submit">Send</button>
     </form>
   </section>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import {computed, ref} from 'vue'
 
 const props = defineProps({
-  room: { type: Object, default: null },
-  messages: { type: Array, default: () => [] },
-  currentUsername: { type: String, default: '' },
-  wsStatus: { type: String, default: 'disconnected' }
+  room: {type: Object, default: null},
+  messages: {type: Array, default: () => []},
+  currentUsername: {type: String, default: ''},
+  wsStatus: {type: String, default: 'disconnected'}
 })
 
 const emit = defineEmits(['send-message'])
