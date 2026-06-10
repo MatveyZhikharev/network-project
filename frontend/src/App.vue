@@ -3,7 +3,7 @@
     <header class="app-header">
       <div>
         <p class="eyebrow">отечественный мессенджер</p>
-        <h1>СУПРЕМУМ</h1>
+        <h1>СУПРЕМУМ🇷🇺</h1>
       </div>
       <nav class="app-nav">
         <RouterLink to="/auth">Auth</RouterLink>
