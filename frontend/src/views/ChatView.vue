@@ -46,6 +46,14 @@
           @join="joinRoom"
           @update:join-password="joinPassword = $event"
       />
+
+      <section class="panel user-panel">
+        <div class="user-panel__inner">
+          <p class="eyebrow">Аккаунт</p>
+          <p class="user-panel__name">{{ currentUsername }}</p>
+          <button class="btn btn-danger" @click="handleDeleteAccount">Удалить аккаунт</button>
+        </div>
+      </section>
     </div>
 
     <ChatPanel
@@ -55,22 +63,37 @@
         :ws-status="wsStatus"
         @send-message="handleSendMessage"
     />
+
+    <!-- Confirmation modal -->
+    <div v-if="showDeleteConfirm" class="modal-overlay" @click.self="showDeleteConfirm = false">
+      <div class="modal">
+        <h3>Удалить аккаунт?</h3>
+        <p>Это действие необратимо. Все данные будут удалены.</p>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" @click="showDeleteConfirm = false">Отмена</button>
+          <button class="btn btn-danger" @click="confirmDeleteAccount">Удалить</button>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import ChatPanel from '../components/ChatPanel.vue'
 import RoomList from '../components/RoomList.vue'
 import { authApi, roomsApi } from '../services/api'
 import { connectToRoom, disconnectWs, sendRoomMessage } from '../services/ws'
 
+const router = useRouter()
 const rooms = ref([])
 const selectedRoom = ref(null)
 const messages = ref([])
 const joinPassword = ref('')
 const wsStatus = ref('disconnected')
 const currentUsername = ref('')
+const showDeleteConfirm = ref(false)
 
 const createForm = reactive({
   name: '',
@@ -183,6 +206,22 @@ function handleSendMessage(content) {
   }
 }
 
+function handleDeleteAccount() {
+  showDeleteConfirm.value = true
+}
+
+async function confirmDeleteAccount() {
+  try {
+    disconnectWs()
+    await authApi.deleteAccount()
+    router.push('/auth')
+  } catch (error) {
+    roomStatus.text = error.message
+    roomStatus.kind = 'error'
+    showDeleteConfirm.value = false
+  }
+}
+
 authApi.me().then(user => {
   currentUsername.value = user.username
 }).catch(() => {})
@@ -193,3 +232,74 @@ onBeforeUnmount(() => {
   disconnectWs()
 })
 </script>
+
+<style scoped>
+.user-panel {
+  margin-top: auto;
+}
+.user-panel__inner {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.user-panel__name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.btn-danger {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+.btn-danger:hover {
+  background: #c53030;
+}
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.modal h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+.modal p {
+  margin: 0;
+  color: #666;
+}
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+.btn-secondary {
+  background: #eee;
+  color: #333;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  background: #ddd;
+}
+</style>

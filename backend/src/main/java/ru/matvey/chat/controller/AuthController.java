@@ -46,5 +46,14 @@ public class AuthController {
     public UserResponse getMe() {
         return authService.getCurrentUser();
     }
-}
 
+    @DeleteMapping("/account")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAccount(HttpServletRequest request) {
+        authService.deleteAccount();
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+    }
+}

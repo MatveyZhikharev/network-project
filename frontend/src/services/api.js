@@ -43,6 +43,12 @@ export const authApi = {
     },
     me() {
         return request('/api/auth/me')
+    },
+    logout() {
+        return request('/api/auth/logout', { method: 'POST' })
+    },
+    deleteAccount() {
+        return request('/api/auth/account', { method: 'DELETE' })
     }
 }
 

@@ -65,5 +65,13 @@ public class AuthService {
         
         return new UserResponse(user.getId().toString(), user.getUsername(), user.getEmail());
     }
-}
 
+    @Transactional
+    public void deleteAccount() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "Not authenticated"));
+        userRepository.delete(user);
+        SecurityContextHolder.clearContext();
+    }
+}
