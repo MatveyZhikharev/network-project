@@ -44,20 +44,18 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - certbot-certs:/etc/letsencrypt
+      - /etc/letsencrypt:/etc/letsencrypt:ro   # монтируем хостовые сертификаты
     depends_on:
       - backend
-      - certbot
 
-  certbot:
+  duckdns:
     image: linuxserver/duckdns
-    container_name: chat-certbot
+    container_name: chat-duckdns
     environment:
-      - SUBDOMAINS=${DUCKDNS_DOMAIN}
+      - SUBDOMAINS=supremum
       - TOKEN=${DUCKDNS_TOKEN}
       - TZ=Europe/Moscow
-    volumes:
-      - certbot-certs:/config/letsencrypt
+      - ONLY_SUBDOMAINS=true
     restart: unless-stopped
 
 volumes:
