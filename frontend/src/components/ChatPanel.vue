@@ -20,7 +20,9 @@
           <strong>{{ message.senderUsername || 'system' }}</strong>
           <span>{{ message.createdAt }}</span>
         </div>
-        <p v-html="message.content"></p>
+
+        <p v-if="'.png' in message.content || '.jpg' in message.content || '.jpeg' in message.content" v-html="message.content"></p>
+        <img v-else @href="message.content">
       </article>
 
       <div v-if="!messages.length" class="empty-state">
