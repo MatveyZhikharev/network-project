@@ -29,7 +29,7 @@
             "
             v-html="message.content"
         ></p>
-        <img v-else @href="message.content" width="300px" height="500px">
+        <img v-else :src="message.content" width="300px" height="500px">
       </article>
 
       <div v-if="!messages.length" class="empty-state">
