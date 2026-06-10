@@ -20,7 +20,7 @@
           <strong>{{ message.senderUsername || 'system' }}</strong>
           <span>{{ message.createdAt }}</span>
         </div>
-        <p>{{ message.content }}</p>
+        <p>{ message.content }</p>
       </article>
 
       <div v-if="!messages.length" class="empty-state">
