@@ -12,7 +12,9 @@ public class Room {
     @Enumerated(EnumType.STRING) @Column(nullable = false) private AccessType accessType;
     private String passwordHash;
     @Column(nullable = false, updatable = false) private Instant createdAt = Instant.now();
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "created_by_id", nullable = false) private User createdBy;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "created_by_id", nullable = false)
+    private User createdBy;
     public Room() {}
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }

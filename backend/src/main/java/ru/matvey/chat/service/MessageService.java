@@ -45,6 +45,7 @@ public class MessageService {
         Message message = new Message();
         message.setRoom(room);
         message.setSender(user);
+        if (content.contains(".png") || content.contains(".jpg") || content.contains(".jpeg")) content = "<img href=\"%s\" width=300px height=300px>".formatted(content);
         message.setContent(content);
         message.setMessageType(MessageType.TEXT);
         

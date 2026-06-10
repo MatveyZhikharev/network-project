@@ -7,8 +7,8 @@ import java.util.UUID;
 @Table(name = "messages", indexes = {@Index(name = "idx_message_room_created", columnList = "room_id, created_at")})
 public class Message {
     @Id @GeneratedValue(strategy = GenerationType.UUID) private UUID id;
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "room_id", nullable = false) private Room room;
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "sender_id") private User sender;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) @JoinColumn(name = "room_id", nullable = false) private Room room;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) @JoinColumn(name = "sender_id") private User sender;
     @Column(nullable = false, columnDefinition = "TEXT") private String content;
     @Enumerated(EnumType.STRING) @Column(nullable = false) private MessageType messageType;
     @Column(nullable = false, updatable = false) private Instant createdAt = Instant.now();

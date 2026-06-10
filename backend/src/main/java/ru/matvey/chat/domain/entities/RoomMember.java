@@ -7,8 +7,8 @@ import java.util.UUID;
 @Table(name = "room_members", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "room_id"})})
 public class RoomMember {
     @Id @GeneratedValue(strategy = GenerationType.UUID) private UUID id;
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "user_id", nullable = false) private User user;
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "room_id", nullable = false) private Room room;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) @JoinColumn(name = "user_id", nullable = false) private User user;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE) @JoinColumn(name = "room_id", nullable = false) private Room room;
     @Enumerated(EnumType.STRING) @Column(nullable = false) private RoleType role;
     @Column(nullable = false, updatable = false) private Instant joinedAt = Instant.now();
     @Column(nullable = false) private boolean active = true;
