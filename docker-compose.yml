@@ -41,9 +41,25 @@ services:
       dockerfile: Dockerfile
     container_name: chat-frontend
     ports:
-      - "5173:80"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certbot-certs:/etc/letsencrypt
     depends_on:
       - backend
+      - certbot
+
+  certbot:
+    image: linuxserver/duckdns
+    container_name: chat-certbot
+    environment:
+      - SUBDOMAINS=${DUCKDNS_DOMAIN}
+      - TOKEN=${DUCKDNS_TOKEN}
+      - TZ=Europe/Moscow
+    volumes:
+      - certbot-certs:/config/letsencrypt
+    restart: unless-stopped
 
 volumes:
   chat_pgdata:
+  certbot-certs:
