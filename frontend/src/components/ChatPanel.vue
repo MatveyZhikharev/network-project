@@ -23,9 +23,9 @@
 
         <p
             v-if="
-              message.content.includes('.png') ||
-              message.content.includes('.jpg') ||
-              message.content.includes('.jpeg')
+              !message.content.includes('.png') &&
+              !message.content.includes('.jpg') &&
+              !message.content.includes('.jpeg')
             "
             v-html="message.content"
         ></p>
